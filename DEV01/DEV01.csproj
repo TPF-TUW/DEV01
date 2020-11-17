@@ -59,6 +59,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="classConn.cs" />
+    <Compile Include="classTools.cs" />
     <Compile Include="DEV01-M04.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +79,7 @@
     <Compile Include="DEV01-M11.Designer.cs">
       <DependentUpon>DEV01-M11.cs</DependentUpon>
     </Compile>
+    <Compile Include="Functionality\Function.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
