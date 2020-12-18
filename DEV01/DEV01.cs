@@ -1108,7 +1108,8 @@ namespace DEV01
                     txtSampleID_Mat.Text = dosetOIDSMPL;
                     txtMatRecordID_Mat.Text = db.get_newOIDMat();
                     db.getGrid_FBListSample(gridControl6, " And smplQR.OIDSMPL = " + dosetOIDSMPL + " ");
-                    db.getGl("Select OIDDEPT,b.Name as Branch,d.Name as Department From Departments d inner join Branchs b on b.OIDBranch = d.OIDBRANCH", mainConn, glWorkStation_Mat, "OIDDEPT", "Department");
+                    //db.getGl("Select OIDDEPT,b.Name as Branch,d.Name as Department From Departments d inner join Branchs b on b.OIDBranch = d.OIDBRANCH", mainConn, glWorkStation_Mat, "OIDDEPT", "Department");
+                    db.get_gl_WorkStationMat(glWorkStation_Mat);
                     db.getSl("Select OIDVEND,Code,Name From Vendor", mainConn, slVendor_Mat, "OIDVEND", "Code");
                     db.getSl("Select OIDCOLOR,ColorName From ProductColor", mainConn, slMatColor_Mat, "OIDCOLOR", "ColorName");
                     db.getSl("Select OIDITEM,Code From Items Where MaterialType in(2,3)", mainConn, slMatCode_Mat, "OIDITEM", "Code");
