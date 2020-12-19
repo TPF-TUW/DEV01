@@ -305,8 +305,8 @@ namespace DEV01
         }
         public void get_gl_WorkStationMat(GridLookUpEdit gl)
         {
-            string sql = "Select Code,Name From DepartmentType Where Code in (1,4,5)";
-            getGl(sql,MDS(),gl, "Code", "Name");
+            string sql = "Select OIDDEPT,brn.Name as BranName,dep.Name as Department From Departments dep inner join Branchs brn on brn.OIDBranch = dep.OIDBRANCH Where DepartmentType in(1,4,5) order by OIDDEPT";
+            getGl(sql,MDS(),gl, "OIDDEPT", "Department");
         }
     }
 }
