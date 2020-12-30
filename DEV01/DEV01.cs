@@ -164,6 +164,7 @@ namespace DEV01
         private void newMain()
         {
             //MessageBox.Show("newMain");
+            dosetOIDSMPL                                = string.Empty;
             bbiSave.Enabled                             = true;
             bbiEdit.Visibility                          = DevExpress.XtraBars.BarItemVisibility.Never;
             tabbedControlGroup1.SelectedTabPageIndex    = 1;
@@ -1065,6 +1066,17 @@ namespace DEV01
                 if (SaleSection != "" /*&& ReferenceNo != ""*/ && Season != "")
                 {
                     btnGenSMPLNo.Enabled = true;
+                }
+
+                if (dosetOIDSMPL == "")
+                {
+                    bbiSave.Enabled = true;
+                    bbiEdit.Enabled = false;
+                }
+                else
+                {
+                    bbiSave.Enabled = false;
+                    bbiEdit.Enabled = true;
                 }
             }
 
