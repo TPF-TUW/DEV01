@@ -80,6 +80,7 @@ namespace DEV01
             txtCreateDate_Main.EditValue        = DateTime.Now;
             txtUpdateBy_Main.EditValue          = "0";
             txtUpdateDate_Main.EditValue        = DateTime.Now;
+            
             //Branch
             db.getGl("Select OIDBranch,Name as Branch From Branchs", mainConn, glBranch_Main, "OIDBranch", "Branch");
             //Department SalcSection
@@ -92,13 +93,17 @@ namespace DEV01
             db.getGl("Select OIDGCATEGORY,CategoryName from GarmentCategory", mainConn, glCategoryDivision_Main, "OIDGCATEGORY", "CategoryName");
             //ProductStyle
             db.getSl("select OIDSTYLE,StyleName From ProductStyle", mainConn, slStyleName_Main, "OIDSTYLE", "StyleName");
+            
             /*Set GridAdd Bind Color and Size*/
             gridView2.OptionsView.NewItemRowPosition = NewItemRowPosition.Top;
             gridControl2.DataSource = db.FGRequestDS();
-            rep_glColor.Properties.NullText = ""; rep_glSize.Properties.NullText = ""; rep_glUnit.Properties.NullText = "";
-            db.get_repGl("Select OIDCOLOR,ColorNo,ColorName From ProductColor", mainConn, rep_glColor, "OIDCOLOR", "ColorName");
-            db.get_repGl("Select OIDSIZE,SizeNo,SizeName From ProductSize",mainConn,rep_glSize, "OIDSIZE", "SizeName");
-            db.get_repGl("Select OIDUNIT,UnitName From Unit", mainConn,rep_glUnit, "OIDUNIT", "UnitName");
+
+            //rep_glColor.Properties.NullText = ""; rep_glSize.Properties.NullText = ""; rep_glUnit.Properties.NullText = "";
+
+            db.get_repGl("Select OIDSIZE,SizeNo,SizeName From ProductSize", mainConn, rep_glSize, "OIDSIZE", "SizeName");
+            db.get_repGl("Select OIDCOLOR,ColorNo,ColorName From ProductColor Where ColorType = 0", mainConn, rep_glColor, "OIDCOLOR", "ColorName");
+            db.get_repGl("Select OIDUNIT,UnitName From Unit", mainConn, rep_glUnit, "OIDUNIT", "UnitName");
+
             int iNo = 1;
             gridView2.InitNewRow += (s, e) =>
             {
@@ -112,27 +117,38 @@ namespace DEV01
                 if (e.KeyCode == Keys.Delete && e.Modifiers == Keys.Control)
                 {
                     if (XtraMessageBox.Show("Delete row(s)?", "Delete rows dialog", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                    { 
                         return;
+                    }
                     GridControl grid    = s as GridControl;
                     GridView view       = grid.FocusedView as GridView;
                     view.DeleteSelectedRows();
                 }
             };
 
+            /* ----------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
             // Tab : Fabric Load
             gridView3.OptionsView.ShowGroupPanel = true;
             /*Vendor : Finish*/
-            db.getSl("Select distinct v.OIDVEND,v.Code,v.Name From SMPLRequestFabric smplFB inner join Vendor v on v.OIDVEND = smplFB.OIDVEND", mainConn, slVendor_FB, "OIDVEND", "Name");
+            //db.getSl("Select distinct v.OIDVEND,v.Code,v.Name From SMPLRequestFabric smplFB inner join Vendor v on v.OIDVEND = smplFB.OIDVEND", mainConn, slVendor_FB, "OIDVEND", "Name");
             /*FBColor : Finish*/
-            db.getSl("Select distinct c.OIDCOLOR,c.ColorName From SMPLRequestFabric smplFB inner join ProductColor c on c.OIDCOLOR = smplFB.OIDCOLOR inner join Items i on i.OIDITEM = smplFB.OIDITEM Where i.MaterialType = 1", mainConn, slFBColor_FB, "OIDCOLOR", "ColorName");
+            //db.getSl("Select distinct c.OIDCOLOR,c.ColorName From SMPLRequestFabric smplFB inner join ProductColor c on c.OIDCOLOR = smplFB.OIDCOLOR inner join Items i on i.OIDITEM = smplFB.OIDITEM Where i.MaterialType = 1", mainConn, slFBColor_FB, "OIDCOLOR", "ColorName");
             /*FBCode : Finish*/
-            db.getSl("Select distinct i.OIDITEM,i.Code From SMPLRequestFabric smplFB inner join Items i on i.OIDITEM = smplFB.OIDITEM Where i.MaterialType = 1", mainConn, slFBCode_FB, "OIDITEM", "Code");
+            //db.getSl("Select distinct i.OIDITEM,i.Code From SMPLRequestFabric smplFB inner join Items i on i.OIDITEM = smplFB.OIDITEM Where i.MaterialType = 1", mainConn, slFBCode_FB, "OIDITEM", "Code");
             /*FGColor : Finish*/
-            db.getSl("Select distinct c.OIDCOLOR,c.ColorNo,c.ColorName From SMPLQuantityRequired q inner join ProductColor c on c.OIDCOLOR = q.OIDCOLOR inner join Items i on i.OIDCOLOR = c.OIDCOLOR Where i.MaterialType = 0", mainConn, slFGColor_FB, "OIDCOLOR", "ColorName");
+            //db.getSl("Select distinct c.OIDCOLOR,c.ColorNo,c.ColorName From SMPLQuantityRequired q inner join ProductColor c on c.OIDCOLOR = q.OIDCOLOR inner join Items i on i.OIDCOLOR = c.OIDCOLOR Where i.MaterialType = 0", mainConn, slFGColor_FB, "OIDCOLOR", "ColorName");
+
             /*Currency : Finish*/
-            db.getGl("Select distinct cc.OIDCURR,cc.Currency From SMPLRequestFabric smplFB inner join Currency cc on cc.OIDCURR = smplFB.OIDCURR", mainConn, glCurrency_FB, "OIDCURR", "Currency");
+            //db.getGl("Select distinct cc.OIDCURR,cc.Currency From SMPLRequestFabric smplFB inner join Currency cc on cc.OIDCURR = smplFB.OIDCURR", mainConn, glCurrency_FB, "OIDCURR", "Currency");
             // Tab : Materials
             // use GridControl 6,7,8
+
+            db.getSl("Select OIDVEND,Code,Name From Vendor", mainConn,                              /*Vendor*/slVendor_FB,      "OIDVEND",  "Name");
+            db.getSl("Select OIDCOLOR,ColorName From ProductColor Where ColorType = 1 ", mainConn,  /*FBColor*/slFBColor_FB,    "OIDCOLOR", "ColorName");
+            db.getSl("Select OIDITEM,Code From Items Where MaterialType = 1", mainConn,             /*FBCode*/slFBCode_FB,      "OIDITEM",  "Code");
+            db.getSl("Select OIDCOLOR,ColorName From ProductColor Where ColorType = 0 ", mainConn,  /*FGColor*/slFGColor_FB,    "OIDCOLOR", "ColorName");
+            db.getGl("Select OIDCURR,Currency From Currency", mainConn,                             /*Currency*/glCurrency_FB,  "OIDCURR",  "Currency");
         }
 
         private void LoadData()
@@ -252,7 +268,11 @@ namespace DEV01
                 picUpload_FB.Image = null;
 
                 gcSize_Fabric.DataSource = null;
-                gcList_Fabric.DataSource = null;
+                //gcList_Fabric.DataSource = null;
+                if (dosetOIDSMPL != "")
+                {
+                    db.getListofFabric(gcList_Fabric, dosetOIDSMPL);
+                }
 
                 db.getGrid_FBListSample(gridControl3, " And smplQR.OIDSMPL = " + dosetOIDSMPL + " ");
                 db.getDgv("Select OIDGParts,GarmentParts From GarmentParts", gcPart_Fabric, mainConn);
@@ -363,7 +383,7 @@ namespace DEV01
                 }
                 if (chk_i == 0)
                 {
-                    ct.showWarningMessage("กรุณาใส่ข้อมูลในตาราง Quantity Required ด้วยพะยาค่ะ");
+                    ct.showWarningMessage("กรุณาใส่ข้อมูลในตาราง Quantity Required ด้วยค่ะ");
                     return;
                 }
 
@@ -460,7 +480,7 @@ namespace DEV01
                         //db.getGrid_SMPL(gridControl1);
                         newMain();
                         //Next to TabPage Fabric
-                        tabbedControlGroup1.SelectedTabPageIndex = 2;
+                        //tabbedControlGroup1.SelectedTabPageIndex = 2;
                     }
                     else
                     {
@@ -597,7 +617,7 @@ namespace DEV01
                 {
                     ct.showInfoMessage("Save Success");
                     newFabric();
-                    tabbedControlGroup1.SelectedTabPageIndex = 3;
+                    //tabbedControlGroup1.SelectedTabPageIndex = 3;
                 }
                 else
                 {
@@ -1050,7 +1070,8 @@ namespace DEV01
             if (tabName == "List of Sample")
             {
                 bbiEdit.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
-                bbiRefresh.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
+                //bbiRefresh.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
+                ct.bbi_Show(bbiRefresh);
                 db.getGrid_SMPL(gridControl1);
             }
             
@@ -1085,6 +1106,7 @@ namespace DEV01
             {
                 bbiEdit.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
                 //bbiNew.Enabled = false;
+                ct.bbi_Show(bbiRefresh);
                 bbiSave.Enabled = false;
                 if (dosetOIDSMPL != "" && PageFBVal == false)
                 {
@@ -1123,7 +1145,7 @@ namespace DEV01
                     //db.getGl("Select OIDDEPT,b.Name as Branch,d.Name as Department From Departments d inner join Branchs b on b.OIDBranch = d.OIDBRANCH", mainConn, glWorkStation_Mat, "OIDDEPT", "Department");
                     db.get_gl_WorkStationMat(glWorkStation_Mat);
                     db.getSl("Select OIDVEND,Code,Name From Vendor", mainConn, slVendor_Mat, "OIDVEND", "Code");
-                    db.getSl("Select OIDCOLOR,ColorName From ProductColor", mainConn, slMatColor_Mat, "OIDCOLOR", "ColorName");
+                    db.getSl("Select OIDCOLOR,ColorName From ProductColor Where ColorType in (2,3) ", mainConn, slMatColor_Mat, "OIDCOLOR", "ColorName");
                     db.getSl("Select OIDITEM,Code From Items Where MaterialType in(2,3)", mainConn, slMatCode_Mat, "OIDITEM", "Code");
                     db.getGl("Select OIDCURR,Currency From Currency", mainConn, glCurrency_Mat, "OIDCURR", "Currency");
 
@@ -1133,7 +1155,7 @@ namespace DEV01
                     //Set rep_gl
                     db.get_repGl("Select OIDSIZE,SizeName From ProductSize", mainConn,rep_glSize_Mat, "OIDSIZE", "SizeName");
                     db.get_repGl("Select OIDUNIT,UnitName From Unit", mainConn,rep_glUnit_Mat, "OIDUNIT", "UnitName");
-                    db.get_repGl("Select OIDCOLOR,ColorName From ProductColor", mainConn,rep_glColor_Mat, "OIDCOLOR", "ColorName");
+                    db.get_repGl("Select OIDCOLOR,ColorName From ProductColor Where ColorType in (2,3) ", mainConn,rep_glColor_Mat, "OIDCOLOR", "ColorName");
 
                     // Test :: getListofMaterial
                     db.getListofMaterial(gridControl8,dosetOIDSMPL);
@@ -1363,43 +1385,6 @@ namespace DEV01
         {
             if (ct.doConfirm("Update SampleRequest ?") == true)
             {
-                //chk Quantity Required
-                //GridView gv = gridView2;
-                //int chk_i = 0;
-                //if (gv.RowCount <= 0)
-                //{
-                //    ct.showWarningMessage("Please Push Data to List Quantity Required"); gv.Focus(); return;
-                //}
-                //else
-                //{
-                //    for (int i = 0; i < gv.RowCount; i++)
-                //    {
-                //        if (gv.GetRowCellValue(i, "Color").ToString() == "") { MessageBox.Show("เลือก Color ด้วยสิคร๊าบ! ขอร้องหละ"); return; } 
-                //        if (gv.GetRowCellValue(i, "Size").ToString() == "") { MessageBox.Show("เลือก Size ด้วยสิคร๊าบ! ขอร้องหละ"); return; } 
-                //        if (gv.GetRowCellValue(i, "Unit").ToString() == "") { MessageBox.Show("เลือก Unit ด้วยสิคร๊าบ! ขอร้องหละ"); return; } 
-                //        if (gv.GetRowCellValue(i, "Quantity").ToString() == "") { MessageBox.Show("เลือก Quantity ด้วยสิคร๊าบ! ขอร้องหละ"); return; }
-                //        if (Convert.ToInt32(gv.GetRowCellValue(i, "Quantity").ToString()) < 1)
-                //        {
-                //            MessageBox.Show("เลือก Quantity ตั้งแต่ 1 ขึ้นไป ขอร้องหละ"); return;
-                //        }
-                //        else
-                //        {
-                //            string No       = gv.GetRowCellValue(i, "No").ToString();
-                //            string Color    = gv.GetRowCellValue(i, "Color").ToString();
-                //            string Size     = gv.GetRowCellValue(i, "Size").ToString();
-                //            string Quantity = gv.GetRowCellValue(i, "Quantity").ToString();
-                //            string Unit     = gv.GetRowCellValue(i, "Unit").ToString();
-
-                //            chk_i++;
-                //            Console.WriteLine(No + "," + Color + "," + Size + "," + Quantity + "," + Unit);
-                //        }
-                //    }
-                //}
-                //if (chk_i == 0)
-                //{
-                //    ct.showWarningMessage("Please Push Data to List Quantity Required"); gv.Focus(); return;
-                //}
-
                 /*TextEdit*/
                 string SMPLNo               = txtSMPLNo.Text.ToString().Trim().Replace("'","''");
                 string ReferenceNo          = txtReferenceNo_Main.EditValue.ToString().Trim().Replace("'", "''");
@@ -1451,8 +1436,11 @@ namespace DEV01
                 if (SMPLPatternNo == "") {  ct.showWarningMessage("กรุณาใส่ข้อมูล SMPLPatternNo!"); txtSMPLPatternNo_Main.Focus(); return; }
 
                 string newFileName = ct.uploadImg(txtPictureFile_Main, "FG");
+                int status = (CustApproved == 0) ? 2 : 0;
 
-                sql = "Update SMPLRequest Set OIDBranch="+ OIDBranch + ",RequestDate='" + RequestDate + "',SpecificationSize=" + SpecificationSize + ",ContactName='" + ContactName + "',DeliveryRequest='" + DeliveryRequest + "',UseFor=" + UseFor + ",SMPLItem='" + SMPLItem + "',ModelName='" + ModelName + "',OIDCATEGORY=" + OIDCATEGORY + ",Situation='" + Situation + "',StateArrangements='" + StateArrangements + "',CustApproved=" + CustApproved + ",CustApprovedDate='" + CustApprovedDate + "',ACPurRecBy=" + ACPurRecBy + ",ACPurRecDate='" + ACPurRecDate + "',FBPurRecBy=" + FBPurRecBy + ",FBPurRecDate='" + FBPurRecDate + "' /*,PictureFile=" + newFileName + "*/ WHERE SMPLNo = '"+SMPLNo+"' ";
+                sql = "Update SMPLRequest Set OIDBranch="+ OIDBranch + ",RequestDate='" + RequestDate + "',SpecificationSize=" + SpecificationSize + ",ContactName='" + ContactName + "',DeliveryRequest='" + DeliveryRequest + "',UseFor=" + UseFor + ",SMPLItem='" + SMPLItem + "',ModelName='" + ModelName + "',OIDCATEGORY=" + OIDCATEGORY + ",Situation='" + Situation + "',StateArrangements='" + StateArrangements + "',CustApproved=" + CustApproved + ",CustApprovedDate='" + CustApprovedDate + "',ACPurRecBy=" + ACPurRecBy + ",ACPurRecDate='" + ACPurRecDate + "',FBPurRecBy=" + FBPurRecBy + ",FBPurRecDate='" + FBPurRecDate + "',Status = "+ status + " ";
+                //sql += " /*,PictureFile=" + newFileName + "*/ ";
+                sql += " WHERE SMPLNo = '" + SMPLNo + "' ";
 
                 Console.WriteLine(sql);
                 int i = db.Query(sql, mainConn);
@@ -1463,7 +1451,7 @@ namespace DEV01
                     newMain();
                 }
             }
-        }
+        } //end-update-main
 
         private void updateFabric()
         {
@@ -2069,13 +2057,17 @@ namespace DEV01
             //bbiSave.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
             //bbiEdit.Visibility = DevExpress.XtraBars.BarItemVisibility.Always;
 
-            db.getGrid_FBListSample(gridControl3, " And smplQR.OIDSMPL = " + dosetOIDSMPL + " ");
+            if (dosetOIDSMPL != "")
+            {
+                // tbl ListofSample
+                db.getGrid_FBListSample(gridControl3, " And smplQR.OIDSMPL = " + dosetOIDSMPL + " ");
+                // tbl ListofFabric
+                db.getListofFabric(gcList_Fabric, dosetOIDSMPL);
+            }
+            
             db.getDgv("Select OIDGParts,GarmentParts From GarmentParts", gcPart_Fabric, mainConn);
             txtSampleID_FB.Text = dosetOIDSMPL;
             txtFabricRacordID_FB.Text = db.get_oneParameter("Select case When ISNULL( MAX(OIDSMPLFB),'') = '' Then 1 Else MAX(OIDSMPLFB) End as maxFB From SMPLRequestFabric", mainConn, "maxFB");
-
-            //get List of Fabric
-            db.getListofFabric(gcList_Fabric, dosetOIDSMPL);
 
             //Set New OIDFB
             txtFabricRacordID_FB.EditValue = null;//db.get_newOIDFB();
@@ -2107,6 +2099,12 @@ namespace DEV01
                 case "Fabric": refreshFabric(); break;
                 //case "Material": refreshMaterials(); break;
                 default: break;
+            }
+
+            // ListofSample
+            if (tabbedControlGroup1.SelectedTabPageIndex == 0)
+            {
+                db.getGrid_SMPL(gridControl1);
             }
         }
 
