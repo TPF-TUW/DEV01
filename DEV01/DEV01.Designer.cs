@@ -1042,6 +1042,7 @@
             this.gridView7.OptionsView.EnableAppearanceEvenRow = true;
             this.gridView7.OptionsView.EnableAppearanceOddRow = true;
             this.gridView7.OptionsView.ShowGroupPanel = false;
+            this.gridView7.ValidatingEditor += new DevExpress.XtraEditors.Controls.BaseContainerValidateEditorEventHandler(this.gridView7_ValidatingEditor);
             // 
             // gridColumn64
             // 
@@ -3628,7 +3629,7 @@
             this.tabbedControlGroup1.Location = new System.Drawing.Point(0, 0);
             this.tabbedControlGroup1.Name = "tabbedControlGroup1";
             this.tabbedControlGroup1.Padding = new DevExpress.XtraLayout.Utils.Padding(2, 2, 2, 2);
-            this.tabbedControlGroup1.SelectedTabPage = this.layoutControlGroup8;
+            this.tabbedControlGroup1.SelectedTabPage = this.layoutControlGroup12;
             this.tabbedControlGroup1.Size = new System.Drawing.Size(1336, 606);
             this.tabbedControlGroup1.TabPages.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlGroup1,
@@ -4365,7 +4366,7 @@
             this.Name = "DEV01";
             this.Ribbon = this.ribbonControl;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "DEV01 :  Sample Request";
+            this.Text = "DEV01 :  Sample Request v1";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.XtraForm1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl)).EndInit();

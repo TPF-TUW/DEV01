@@ -1146,7 +1146,7 @@ namespace DEV01
                     db.get_gl_WorkStationMat(glWorkStation_Mat);
                     db.getSl("Select OIDVEND,Code,Name From Vendor", mainConn, slVendor_Mat, "OIDVEND", "Code");
                     db.getSl("Select OIDCOLOR,ColorName From ProductColor Where ColorType in (2,3) ", mainConn, slMatColor_Mat, "OIDCOLOR", "ColorName");
-                    db.getSl("Select OIDITEM,Code From Items Where MaterialType in(2,3)", mainConn, slMatCode_Mat, "OIDITEM", "Code");
+                    db.getSl("Select OIDITEM,Code From Items Where MaterialType in(2,3)", mainConn, /*MatCode*/slMatCode_Mat, "OIDITEM", "Code");
                     db.getGl("Select OIDCURR,Currency From Currency", mainConn, glCurrency_Mat, "OIDCURR", "Currency");
 
                     //Lood Grid
@@ -1559,12 +1559,14 @@ namespace DEV01
                     string pathFile     = ct.getVal_text(txtPathFile_Mat); /*ยังไม่ Update อันนี้นะจ๊ะ*/
 
                     // Special Var in Gridview
-                    string matColor     = (g.GetRowCellValue(0,"Color").ToString() == "") ? "null" : g.GetRowCellValue(0, "Color").ToString();
+                    string matColor     = (g.GetRowCellValue(0,"Color").ToString() == "") ? "null" : g.GetRowCellValue(0, "Color").ToString(); //ct.showInfoMessage(matColor);
                     string Consumption  = (g.GetRowCellValue(0, "Consumption").ToString() == "") ? "null" : g.GetRowCellValue(0, "Consumption").ToString();
                     string Size         = g.GetRowCellValue(0, "Size").ToString(); //จะต้องไม่เป็นค่า Null แน่นอน เพราะดึงมาจาก Master
 
                     // SqlUpdate
-                    string sql = "Update SMPLRequestMaterial Set OIDDEPT = " + WorkStation + ",OIDVEND = " + Vendor + ",VendMTCode=" + vendMatCode + ",SMPLotNo=" + Lotno + ",Composition=" + Composition + ",MTColor=" + matColor + ",Consumption=" + Consumption + ",OIDITEM=" + matCode + ",Price=" + price + ",OIDCURR=" + currency + ",Situation=" + situation + ",Comment=" + Comment + ",Remark=" + Remark + " ";
+                    string sql = "Update SMPLRequestMaterial Set OIDDEPT = " + WorkStation + ",OIDVEND = " + Vendor + ",VendMTCode=" + vendMatCode + ",SMPLotNo=" + Lotno + ",Composition=" + Composition + " ";
+                    sql += " ,MTColor=" + matColor + ",Consumption=" + Consumption + ",OIDITEM=" + matCode + ",Price=" + price + ",OIDCURR=" + currency + ",Situation=" + situation + " ";
+                    sql += " ,Comment=" + Comment + ",Remark=" + Remark + " ";
                     sql += " Where OIDSMPLMT = " + txtMatRecordID_Mat.Text.ToString() + " ";
 
                     // CheckUpdate รับค่าจาก Form มาเช็คใน Database 3 ตัว ถ้าตรงกันหมด = ไม่มีอะไรเปลี่ยนแปลง >> แล้วถ้ามีอันไหนไม่ตรงกัน = ให้ chkDup ก่อน Update
@@ -2118,6 +2120,11 @@ namespace DEV01
         {
             PrintingSystemBase pb = e.PrintingSystem as PrintingSystemBase;
             pb.PageSettings.Landscape = true;
+        }
+
+        private void gridView7_ValidatingEditor(object sender, DevExpress.XtraEditors.Controls.BaseContainerValidateEditorEventArgs e)
+        {
+            ct.validate_Numeric(sender, e, "Consumption");
         }
     }
 }
